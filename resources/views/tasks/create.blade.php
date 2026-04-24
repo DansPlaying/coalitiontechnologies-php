@@ -33,6 +33,25 @@
                     </div>
 
                     <div>
+                        <label for="priority" class="block text-sm font-medium text-gray-700 mb-1">
+                            Priority <span class="text-red-500">*</span>
+                        </label>
+                        <select id="priority" name="priority"
+                                class="w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500
+                                       @error('priority') border-red-400 @enderror">
+                            @foreach ($priorities as $level)
+                                <option value="{{ $level->value }}"
+                                        {{ old('priority', \App\Enums\Priority::Medium->value) == $level->value ? 'selected' : '' }}>
+                                    {{ $level->label() }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('priority')
+                            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
                         <label for="project_id" class="block text-sm font-medium text-gray-700 mb-1">
                             Project
                         </label>
