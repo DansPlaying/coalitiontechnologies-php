@@ -41,6 +41,18 @@
         </div>
     @endif
 
+    @if ($selectedProjectId)
+        <p class="text-xs text-gray-400 mb-3 flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+            Drag rows to reorder. Priority updates automatically.
+        </p>
+    @else
+        <p class="text-xs text-gray-400 mb-3">Select a project to enable drag-and-drop reordering.</p>
+    @endif
+
     {{-- Task list --}}
     @if ($tasks->isEmpty())
         <div class="bg-white rounded-lg shadow-sm p-12 text-center">
@@ -56,15 +68,28 @@
             </a>
         </div>
     @else
-        <ul class="space-y-2">
+        <ul id="task-list"
+            class="space-y-2"
+            {{ $selectedProjectId ? 'data-sortable' : '' }}>
             @foreach ($tasks as $task)
-                <li class="bg-white rounded-lg shadow-sm border border-gray-100 flex items-center gap-3 px-4 py-3
-                           hover:shadow-md transition-shadow">
+                <li data-id="{{ $task->id }}"
+                    class="bg-white rounded-lg shadow-sm border border-gray-100 flex items-center gap-3 px-4 py-3
+                           hover:shadow-md transition-shadow {{ $selectedProjectId ? 'cursor-grab active:cursor-grabbing' : '' }}">
 
-                    {{-- Priority badge --}}
-                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold
-                                 ring-1 ring-inset flex-shrink-0 {{ $task->priority->badgeClasses() }}">
-                        {{ $task->priority->label() }}
+                    {{-- Drag handle (only when single-project view) --}}
+                    @if ($selectedProjectId)
+                        <span data-drag-handle class="text-gray-300 hover:text-gray-500 flex-shrink-0 select-none" title="Drag to reorder">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M7 2a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm6 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM7 8a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm6 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM7 14a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm6 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
+                            </svg>
+                        </span>
+                    @endif
+
+                    {{-- Priority badge — continues from $startIndex across pages --}}
+                    <span data-priority-badge
+                          class="inline-flex items-center justify-center w-8 h-8 rounded-full text-xs font-bold
+                                 bg-blue-100 text-blue-700 ring-1 ring-inset ring-blue-200 flex-shrink-0">
+                        {{ $startIndex + $loop->iteration }}
                     </span>
 
                     {{-- Task name + meta --}}
@@ -109,9 +134,9 @@
             @endforeach
         </ul>
 
-        {{ $tasks->links('vendor.pagination.cursor', [
-            'nextOffset' => 0,
-            'prevOffset' => 0,
-        ]) }}
+        {{-- Cursor pagination — only rendered in "All Tasks" view (> 15 tasks) --}}
+        @if ($tasks instanceof \Illuminate\Pagination\CursorPaginator)
+            {{ $tasks->links('vendor.pagination.cursor', ['startIndex' => $startIndex]) }}
+        @endif
     @endif
 @endsection

@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Enums\Priority;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -14,7 +13,7 @@ class Task extends Model
     protected $fillable = ['project_id', 'name', 'priority'];
 
     protected $casts = [
-        'priority'   => Priority::class,
+        'priority'   => 'integer',
         'project_id' => 'integer',
     ];
 

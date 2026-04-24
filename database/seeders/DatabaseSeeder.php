@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Enums\Priority;
 use App\Models\Project;
 use App\Models\Task;
 use Illuminate\Database\Seeder;
@@ -41,14 +40,12 @@ class DatabaseSeeder extends Seeder
             ],
         ];
 
-        $cycle = [Priority::UltraHigh, Priority::High, Priority::Medium, Priority::Low, Priority::Medium];
-
         foreach ($projects as $project) {
-            foreach ($taskNames[$project->name] as $index => $name) {
+            foreach ($taskNames[$project->name] as $priority => $name) {
                 Task::create([
                     'project_id' => $project->id,
                     'name'       => $name,
-                    'priority'   => $cycle[$index],
+                    'priority'   => $priority + 1,
                 ]);
             }
         }

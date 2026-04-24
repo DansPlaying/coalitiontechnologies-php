@@ -2,9 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\Priority;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rules\Enum;
 
 class UpdateTaskRequest extends FormRequest
 {
@@ -18,7 +16,6 @@ class UpdateTaskRequest extends FormRequest
         return [
             'name'       => ['required', 'string', 'max:255'],
             'project_id' => ['nullable', 'integer', 'exists:projects,id'],
-            'priority'   => ['required', new Enum(Priority::class)],
         ];
     }
 }

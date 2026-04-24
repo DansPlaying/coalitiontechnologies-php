@@ -1,12 +1,13 @@
 @if ($paginator->hasPages())
 @php
-    $nextUrl = $paginator->nextPageUrl()     ? $paginator->nextPageUrl()     . '&offset=' . $nextOffset : null;
-    $prevUrl = $paginator->previousPageUrl() ? $paginator->previousPageUrl() . '&offset=' . $prevOffset : null;
+    $nextStart = $startIndex + $paginator->count();
+    $prevStart = max(0, $startIndex - $paginator->perPage());
+    $nextUrl   = $paginator->nextPageUrl()     ? $paginator->nextPageUrl()     . '&start=' . $nextStart : null;
+    $prevUrl   = $paginator->previousPageUrl() ? $paginator->previousPageUrl() . '&start=' . $prevStart : null;
 @endphp
     <nav class="flex items-center justify-between mt-6 pt-6 border-t border-gray-200" aria-label="Pagination">
         <p class="text-sm text-gray-500">
-            Showing <span class="font-medium text-gray-700">{{ $paginator->count() }}</span>
-            {{ Str::plural('task', $paginator->count()) }} per page
+            Showing <span class="font-medium text-gray-700">{{ $startIndex + 1 }}–{{ $startIndex + $paginator->count() }}</span>
         </p>
 
         <div class="flex items-center gap-2">
